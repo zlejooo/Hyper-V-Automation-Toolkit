@@ -11,8 +11,9 @@
 #
 # Script Name   : VM_OS_Report.ps1
 # Author        : zlejooo
-# Created.      : 2025-11-20
-# Version.      : 1.0.0
+# Created       : 2025-11-20
+# Updated       : 2025-11-21
+# Version       : 1.0.1
 # Description   : Report OS from all Hyper-V VMs
 # Requirements  :
 #                 - PowerShell 5.1 or later
@@ -27,14 +28,14 @@
 $HyperVhost = hostname
 
 $vms = Get-VM -ComputerName $HyperVhost | Select-Object Name
-$OSReport = foreach($vm in $vms){
-    $query   = "Select * From Msvm_ComputerSystem Where ElementName='$($vm.name)'"
-    $vmq     = Get-CimInstance -namespace root\virtualization\v2 -query $query -computername $hyper_v_server
+$OSReport = foreach ($vm in $vms) {
+    $query = "Select * From Msvm_ComputerSystem Where ElementName='$($vm.name)'"
+    $vmq = Get-CimInstance -namespace root\virtualization\v2 -query $query -computername $HyperVhost
     $vm_info = Get-CimAssociatedInstance -InputObject $vmq
 
     [pscustomobject]@{
         VmName  = $vm.name
-        GuestOS = ($vm_info | where GuestOperatingSystem).GuestOperatingSystem
+        GuestOS = ($vm_info | Where-Object GuestOperatingSystem).GuestOperatingSystem
     }
 }
 
